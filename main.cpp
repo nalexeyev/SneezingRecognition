@@ -131,7 +131,9 @@ int main(int argc, char** argv) {
 		log_file.close();
 		}
 
-
+#ifdef _MSC_VER
+	system("pause");
+#endif
 	return EXIT_SUCCESS;
 }
 

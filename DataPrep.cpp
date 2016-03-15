@@ -621,9 +621,15 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 
 	if (option_WriteSplittedSounds)
 	{
-		if (!option_SilentMode) { cout << endl << "Writing of Sounds extracted from input files is started..." <<flush;}
+		if (!option_SilentMode) { cout << "{Writing Sounds extracted from input files is started..." << flush;}
 
-		system(("mkdir -p " + setting_InputDataFolder + "splitted" + separator()).c_str());
+#ifndef _MSC_VER
+		std::string mkdir_command("mkdir -p " + setting_InputDataFolder + "splitted" + separator());
+#else
+		std::string mkdir_command("IF NOT EXIST " + setting_InputDataFolder + "splitted" + separator() + " mkdir " + setting_InputDataFolder + "splitted" + separator());
+		
+#endif
+		system(mkdir_command.c_str());
 
 		//for (uint i = 0; i <= sounds.back().id; ++i)
 		int i = 0;
@@ -633,7 +639,7 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 			isOk = saveSoundAsAudio(path, frames, *it, wavData);
 			if (!isOk) {cout << "Something went wrong during writing of Sounds extracted from input files" << endl; return -2;}
 		}
-		if (!option_SilentMode) {cout << "Done." << endl << endl;}
+		if (!option_SilentMode) {cout << "Done.} " << flush;}
 	}
 
 
