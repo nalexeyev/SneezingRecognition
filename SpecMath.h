@@ -1,17 +1,8 @@
-/*
- * SpecMath.h
- *
- *  Created on: Feb 8, 2016
- *      Author: nick
- */
-
 #ifndef SPECMATH_H_
 #define SPECMATH_H_
 
 #include "config.h"
 #include "ServiceFunc.h"
-
-
 
 using namespace std;
 

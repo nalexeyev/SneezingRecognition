@@ -1,10 +1,3 @@
-/*
- * ServiceFunc.h
- *
- *  Created on: Feb 29, 2016
- *      Author: nick
- */
-
 #ifndef SERVICEFUNC_H_
 #define SERVICEFUNC_H_
 

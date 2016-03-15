@@ -97,7 +97,6 @@ int main(int argc, char** argv) {
 					else
 						{ cout << "Something went wrong during making decision" << endl;}
 
-
 						if (option_ResultsToFile)
 						{
 							res_file << inputFile << "," << decision << endl;

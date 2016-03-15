@@ -1,17 +1,7 @@
-/*
- * config.h
- *
- *  Created on: Feb 8, 2016
- *      Author: nick
- */
-
-
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-
 #define __GXX_EXPERIMENTAL_CXX0X__ 1
-
 
 #ifdef _WIN32
 #define SEPARATOR "\\"
@@ -48,7 +38,6 @@ inline char separator()
 #include <stdio.h>
 #include <dirent.h>
 #include <iomanip>
-
 
 	/**
 	 * Raw audio data type

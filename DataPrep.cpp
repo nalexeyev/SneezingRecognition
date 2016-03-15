@@ -115,7 +115,6 @@ void WavData::readData(std::fstream& fs, const WavHeader& wavHeader, WavData& wa
 
 	for (sampleNumber = 0; sampleNumber < numberOfSamplesXChannels; sampleNumber++) {
 		wavFile.normalizedData[sampleNumber] = static_cast<double>(wavFile.rawData[sampleNumber]) / maxAbs;
-		//	cout << wavFile.normalizedData[sampleNumber] << " : " << wavFile.rawData[sampleNumber] << endl;
 	}
 
 	// Update values
@@ -133,7 +132,6 @@ bool separateSamplesToFrames(WavData* data, std::vector<sFrame> *frames)
 	uint32_t bytesPerFrame = static_cast<uint32_t>((data->getHeader()).bytesPerSec * FRAME_LENGTH / 1000.0);
 	uint32_t bytesPerSample = static_cast<uint32_t>((data->getHeader()).bitsPerSample / 8);
 	uint32_t samplesPerFrame = static_cast<uint32_t>(bytesPerFrame / bytesPerSample);
-	//assert("Number of samples per frame cannot be less or equal than 0" && samplesPerFrame > 0);
 
 	if (samplesPerFrame <= 0)
 	{
@@ -147,7 +145,6 @@ bool separateSamplesToFrames(WavData* data, std::vector<sFrame> *frames)
 
 	uint32_t samplesPerNonOverlap =	static_cast<uint32_t>(samplesPerFrame * (1 - FRAME_OVERLAP));
 	uint32_t framesCount =	((data->getHeader()).subchunk2Size / bytesPerSample) / samplesPerNonOverlap;
-	//assert("File header is corrupted: subchunk2Size expected not less than 22040" && (data->getHeader()).subchunk2Size > 22040);
 
 	if ((data->getHeader()).subchunk2Size < 10000)
 	{
@@ -158,7 +155,6 @@ bool separateSamplesToFrames(WavData* data, std::vector<sFrame> *frames)
 
 		return false;
 	}
-
 
 	uint32_t indexBegin = 0, indexEnd = 0;
 	uint32_t size = data->getNumberOfSamples();
@@ -193,7 +189,6 @@ bool findSilenceThreshold(std::vector<sFrame> frames, bool *hasSilence, double *
 
 	*hasSilence = false;
 	uint32_t cnt = 0;
-//	cout << endl;
 
 	for (vector<sFrame>::const_iterator frmIt = frames.begin(); frmIt != frames.end(); ++frmIt) {
 		entropyMax = std::max(entropyMax, frmIt->entropy);
@@ -211,9 +206,6 @@ bool findSilenceThreshold(std::vector<sFrame> frames, bool *hasSilence, double *
 			rmsSilence += frmIt->rms;
 			cnt++;
 		}
-
-
-//		cout << frmIt->id << " " <<frmIt->entropy << " " << frmIt->rms << endl;
 	}
 	rmsSilence /= cnt;
 
@@ -225,13 +217,10 @@ bool findSilenceThreshold(std::vector<sFrame> frames, bool *hasSilence, double *
 bool separateFramesToSounds(std::vector<sFrame> frames, std::vector<sSound> * sounds) {
 	std::vector<sSound> ressounds;
 
-	//assert(frames.size() > 10);
-
 	bool hasSilence;
 	double rmsMax = 0., soundThreshold = 0.;
 
 	findSilenceThreshold(frames, &hasSilence, &rmsMax, &soundThreshold);
-	//cout << hasSilence << " " << rmsMax << " " << soundThreshold << endl;
 
 	int32_t SoundId = -1;
 	int32_t firstFrameInCurrentSoundNumber = -1;
@@ -239,7 +228,6 @@ bool separateFramesToSounds(std::vector<sFrame> frames, std::vector<sSound> * so
 	int32_t silenceCnt = 0;
 
 	sSound tmpsSound;
-
 
 	if (hasSilence) {
 		for (vector<sFrame>::const_iterator frmIt = frames.begin(); frmIt != frames.end(); ++frmIt) {
@@ -274,7 +262,6 @@ bool separateFramesToSounds(std::vector<sFrame> frames, std::vector<sSound> * so
 						ressounds.push_back(tmpsSound);
 						sounds->push_back(tmpsSound);
 					}
-
 					firstFrameInCurrentSoundNumber = -1;
 				}
 			}
@@ -311,12 +298,9 @@ bool separateFramesToSounds(std::vector<sFrame> frames, std::vector<sSound> * so
 		}
 
 		for (sFrame &frmIt : frames)
-
 		{
 			soundRMS += frmIt.rms;
 		}
-
-
 
 		soundRMS /= lastFrameInCurrentSoundNumber - firstFrameInCurrentSoundNumber;
 
@@ -326,9 +310,9 @@ bool separateFramesToSounds(std::vector<sFrame> frames, std::vector<sSound> * so
 		tmpsSound.firstFrame = firstFrameInCurrentSoundNumber;
 		tmpsSound.lastFrame = lastFrameInCurrentSoundNumber;
 		for (uint32_t i = firstFrameInCurrentSoundNumber; i <= lastFrameInCurrentSoundNumber; i++)
-			{
-				tmpsSound.vMFCC.push_back(frames.at(i).mfcc);
-			}
+		{
+			tmpsSound.vMFCC.push_back(frames.at(i).mfcc);
+		}
 
 		ressounds.push_back(tmpsSound);
 		sounds->push_back(tmpsSound);
@@ -340,21 +324,6 @@ bool separateFramesToSounds(std::vector<sFrame> frames, std::vector<sSound> * so
 			else	return true;
 
 }
-
-/*
-bool enhanceSounds(std::vector<sSound> sounds, std::vector<sSound> * enhSounds) {
-
-
-	for (sSound &item : sounds)  // range based
-		{
-
-		//	resfile << std::setw(2) << item.id << " ; "<< std::setw(5) << item.firstFrame << " ; " << std::setw(5) << item.lastFrame <<  endl;
-		}
-
-	return true;
-}
-*/
-
 
 bool saveSoundAsAudio(const std::string& file, const std::vector<sFrame> frames, const sSound sound, WavData *wavdata) {
 
@@ -389,12 +358,9 @@ bool saveSoundAsAudio(const std::string& file, const std::vector<sFrame> frames,
 	raw_t* data = new raw_t[waveSize / sizeof(raw_t)];
 
 	uint32_t i = 0;
-
-
 	for (uint32_t currentSample = sampleStart; currentSample <= sampleFinish; currentSample++) {
 
 		data[i] = wavdata->getRawData()[currentSample];
-
 		++i;
 	}
 
@@ -405,10 +371,8 @@ bool saveSoundAsAudio(const std::string& file, const std::vector<sFrame> frames,
 	return true;
 }
 
-
 bool makeTrainDataFile(const std::string& trainInputFolder, const std::string& trainDataFilePath)
 {
-
 	const char *  trainWaveFilesFolder = trainInputFolder.c_str();
 	WavData* trainWave;
 	std::string filename, path ,fullpath;
@@ -441,8 +405,6 @@ bool makeTrainDataFile(const std::string& trainInputFolder, const std::string& t
 				}
 
 				separateSamplesToFrames(trainWave, &trainFrames);
-		//		path = filename + "_trainframes_formatted.txt";
-		//		printframes(trainFrames,path);
 
 				trainfile << ent->d_name << std::endl;
 				trainfile << trainFrames.size() << std::endl;
@@ -496,7 +458,6 @@ bool readTrainDataFile(const std::string& trainDataFilePath, std::vector<svMFCC>
 		getline(trainfile, waveFileName);
 		if (waveFileName == "")
 		{
-			//cout<< "Empty string" << endl;
 			break;
 		}
 
@@ -518,9 +479,7 @@ bool readTrainDataFile(const std::string& trainDataFilePath, std::vector<svMFCC>
 			}
 		}
 
-
 		trainMatrices->push_back(item);
-
 	}
 	trainfile.close();
 	if (!option_SilentMode) {cout << "Completed. " << endl << endl ;}
@@ -541,7 +500,6 @@ double* matrixSlicer(std::vector<double*> matrix, uint16_t sliceNo)
 	return arr;
 }
 
-
 int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 {
 	extern bool option_WriteLog;
@@ -558,13 +516,10 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 	std::vector<sFrame> frames;
 	std::vector<sSound> sounds;
 
-
 	WavData* wavData = WavData::readFromFile(setting_InputDataFolder + inputFile);
 
 	isOk = separateSamplesToFrames(wavData, &frames);
 	if (!isOk) {cout << "Something went wrong during separation of samples to frames. " << flush; return -1;}
-
-	//cout<< endl; printframes(frames, "frames.txt");
 
 	isOk = separateFramesToSounds(frames, &sounds);
 	if (!isOk) {cout << "Something went wrong during separation of frames to sounds. " << endl; return -1;}
@@ -580,7 +535,6 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 		log_file << "================================================================================================" << endl;
 		}
 
-
 	if (option_Recognize)
 	{
 		for (std::vector<sSound>::const_iterator sitem = sounds.begin(); sitem != sounds.end(); ++sitem)
@@ -590,7 +544,7 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 
 			for (std::vector<svMFCC>::const_iterator item = etalonframes.begin(); item != etalonframes.end(); ++item)
 			{
-				if (option_WriteLog) ////////////////////////// ???????????????????????????????????
+				if (option_WriteLog)
 					{
 						log_file << "Sound #" << sitem->id << " and etalon file " << setw (8) << item->waveFilename << " ... " << flush;
 					}
@@ -617,7 +571,8 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 		if (!option_SilentMode) {cout << " WAVE min. distance = " << fixed << setprecision(2) << absoluteMinimum << " ==> " << flush; }
 		//cout << ":" << flush;
 	}
-	/** (Optional) Writing of Sounds extracted from input files *************************************/
+
+/** (Optional) Writing of Sounds extracted from input files *************************************/
 
 	if (option_WriteSplittedSounds)
 	{
@@ -631,7 +586,6 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 #endif
 		system(mkdir_command.c_str());
 
-		//for (uint i = 0; i <= sounds.back().id; ++i)
 		int i = 0;
 		for (std::vector<sSound>::const_iterator it = sounds.begin(); it != sounds.end(); ++it)
 		{
@@ -641,7 +595,6 @@ int makeDecision (std::string inputFile, std::vector<svMFCC> etalonframes)
 		}
 		if (!option_SilentMode) {cout << "Done.} " << flush;}
 	}
-
 
 	if (absoluteMinimum <= DECISION_DISTANCE_THRESHOLD)
 		return 1;

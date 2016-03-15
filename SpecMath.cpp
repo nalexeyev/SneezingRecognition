@@ -1,9 +1,3 @@
-/*
- * SpecMath.cpp
- *
- *  Created on: Feb 8, 2016
- *      Author: nick
- */
 #include "SpecMath.h"
 
 #ifndef M_PI
@@ -84,9 +78,7 @@ double* calcMFCC(const double* source, uint32_t start, uint32_t finish, uint8_t 
 	uint32_t p2length = pow(2, floor(log2(sampleLength)));
 
 	// Calc
-	//time_t fourierStart = time(0);
 	double* fourierRaw = fourierTransformFast(source + start, p2length, true);
-	//cout << "Fourier: " << time(0) - fourierStart << " sec for " << p2length << " (" << sampleLength << ") elements" << endl;
 
 	double** melFilters = getMelFilters(mfccSize, p2length, frequency, freqMin, freqMax);
 	double* logPower = calcPower(fourierRaw, p2length, melFilters, mfccSize);
@@ -111,7 +103,6 @@ double* fourierTransformFast(const double* source, uint32_t length, bool useWind
 
 	bool powerOfTwo = (length > 0) && !(length & (length - 1));
 	assert("FFT input data size must have 2^n size" && powerOfTwo);
-	// p2length = pow(2, ceil(log2(length)));
 
 	// Move to complex calculations
 	double* fourierRaw = new double[length];
@@ -183,12 +174,12 @@ double** getMelFilters(uint8_t mfccSize, uint32_t filterLength, uint32_t frequen
 	fb[mfccSize + 1] = convertToMel(freqMax);
 
 	// Create mel bin
-	for (unsigned short m = 1; m < mfccSize + 1; m++) {
+	for (uint8_t m = 1; m < mfccSize + 1; m++) {
 		fb[m] = fb[0] + m * (fb[mfccSize + 1] - fb[0]) / (mfccSize + 1);
 	}
 
 	//frequency = 0.5 * frequency;
-	for (unsigned short m = 0; m < mfccSize + 2; m++) {
+	for (uint8_t m = 0; m < mfccSize + 2; m++) {
 
 		// Convert them from mel to frequency
 		fb[m] = convertFromMel(fb[m]);
@@ -202,11 +193,11 @@ double** getMelFilters(uint8_t mfccSize, uint32_t filterLength, uint32_t frequen
 
 	// Calc filter banks
 	double** filterBanks = new double*[mfccSize];
-	for (unsigned short m = 0; m < mfccSize; m++) {
+	for (uint8_t m = 0; m < mfccSize; m++) {
 		filterBanks[m] =  new double[filterLength];
 	}
 
-	for (unsigned short m = 1; m < mfccSize + 1; m++) {
+	for (uint8_t m = 1; m < mfccSize + 1; m++) {
 		for (uint32_t k = 0; k < filterLength; k++) {
 
 			if (fb[m - 1] <= k && k <= fb[m]) {
@@ -256,10 +247,10 @@ double* dctTransform(const double* data, uint32_t length) {
 
 	double* dctTransform = new double[length];
 
-	for (unsigned short n = 0; n < length; n++) {
+	for (uint8_t n = 0; n < length; n++) {
 		dctTransform[n] = 0;
 
-		for (unsigned short m = 0; m < length; m++) {
+		for (uint8_t m = 0; m < length; m++) {
 			dctTransform[n] += data[m] * cos(M_PI * n * (m + 1./2.) / length);
 		}
 	}
@@ -312,11 +303,6 @@ double calcDistanceFor2Matrices(const vector<double*> matrix1, const vector<doub
 	for (uint16_t i = 0; i < matricesWidth; i++)
 	{
 		d1 = calcDistance(matrixSlicer(matrix1, i), matrix1.size(), matrixSlicer(matrix2, i), matrix2.size());
-		//cout << endl;
-		//printMFCCarr(matrixSlicer(matrix1, i), matrix1.size());
-		//printMFCCarr(matrixSlicer(matrix2, i), matrix2.size());
-		//cout << endl;
-		//cout<< "distance between vectors:" << d1 << endl;
 		distance += d1;
 	}
 	return distance;
